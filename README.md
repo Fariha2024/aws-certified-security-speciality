@@ -19,18 +19,19 @@
 
 ---
 
-Class-02
+Here is the transcribed text formatted clean and structured in Markdown:
 
-07/06/26
+---
 
-### Module :- 04
+# Class-02
 
-## Identity and Access Management
+**Date:** 07/06/26
 
-→ **IAM (Identity and Access Management)** → Create and Manage Users, Groups, Roles and permissions
+### Module 04: Identity and Access Management
 
-```
-                      ┌───────────────┐          ┌─────────┐
+* **IAM (Identity and Access Management):** Create and manage Users, Groups, Roles, and permissions.
+
+┌───────────────┐          ┌─────────┐
                       │               │◄─────────┤ Users   │ Group
                       │               │          └─────────┘
                       │               │
@@ -47,30 +48,29 @@ Class-02
        │                      │
        ▼                      │
  Admin create Users   ┌───────┴───────┐
-                      │  User  User  User  │
-
-```
+                      │ User User User│
 
 ---
 
-**(1) AWS Management Console User (User through Browser)**
+## 1. AWS Management Console User *(User through Browser)*
 
-#### Users
+### Users Types
 
-→ AWS Management Console Access User
+* AWS Management Console Access User
+* CLI User
 
-→ CLI User
+### Least Privilege Principle
 
-#### Least Privilege
+*(Richard & John, newly joined the company)*
 
-*(Richard & John, Newly join the company)* **Permissions**
+#### Assigned Permissions:
 
-* EC2 ReadOnly Permission
-* S3 ReadOnly Permission
-* Cloudwatch Read permission
+* **EC2 ReadOnly** Permission
+* **S3 ReadOnly** Permission
+* **CloudWatch Read** Permission
 
-```
-         ┌─────────────────────────┐
+
+┌─────────────────────────┐
          │ Richard                 │
          │   │                     │
          │   ▼                     │
@@ -97,8 +97,6 @@ Class-02
                                 ┌───────────┐
                                 │   Users   │ Group
                                 └───────────┘
-
-```
 
 --------------xxxxxxxxxx------------
 
