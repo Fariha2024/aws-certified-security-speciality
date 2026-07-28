@@ -1,18 +1,18 @@
 
 
-![alt text](2a.png)
+![alt text](class2-screenshots/2a.png)
 
 
-![alt text](2b.png)
+![alt text](class2-screenshots/2b.png)
 
 
-![alt text](2c.png)
+![alt text](class2-screenshots/2c.png)
 
 
-![alt text](2d.png)
+![alt text](class2-screenshots/2d.png)
 
 
-![alt text](2e.png)
+![alt text](class2-screenshots/2e.png)
 
 
 
@@ -103,11 +103,11 @@ Here is the transcribed text formatted clean and structured in Markdown:
 
 
 
-![alt text](2f.png)
+![alt text](class2-screenshots/2f.png)
 
 
 
-![alt text](2g.png)
+![alt text](class2-screenshots/2g.png)
 
 
 
@@ -179,10 +179,10 @@ all users in this group
 -------------xxxxxxxxxxxxxx----------
 
 
-![alt text](2h.png)
+![alt text](class2-screenshots/2h.png)
 
 
-![alt text](2i.png)
+![alt text](class2-screenshots/2i.png)
 
 
 
@@ -233,11 +233,11 @@ Create User
 
 --------------xxxxxxxxxxxxx-----------
 
-![alt text](2j.png)
+![alt text](class2-screenshots/2j.png)
 
 
 
-![alt text](2k.png)
+![alt text](class2-screenshots/2k.png)
 
 ---
 
@@ -290,11 +290,11 @@ Create User
 
 
 
-![alt text](2l.png)
+![alt text](class2-screenshots/2l.png)
 
 
 
-![alt text](2m.png)
+![alt text](class2-screenshots/2m.png)
 
 
 
@@ -342,10 +342,10 @@ Create User
 -------xxxxxxxxxx------------
 
 
-![alt text](2n.png)
+![alt text](class2-screenshots/2n.png)
 
 
-![alt text](2o.png)
+![alt text](class2-screenshots/2o.png)
 
 
 ---
@@ -414,11 +414,11 @@ Richard
 ------------xxxxxxxxxxxxxx------------
 
 
-![alt text](2p.png)
+![alt text](class2-screenshots/2p.png)
 
 
 
-![alt text](2q.png)
+![alt text](class2-screenshots/2q.png)
 
 
 ---
@@ -474,13 +474,13 @@ Create group
 ------------xxxxxxxxxxx----------
 
 
-![alt text](2r.png)
+![alt text](class2-screenshots/2r.png)
 
 
-![alt text](2s.png)
+![alt text](class2-screenshots/2s.png)
 
 
-![alt text](2t.png)
+![alt text](class2-screenshots/2t.png)
 
 
 
@@ -561,11 +561,11 @@ IT-Group
 ---------xxxxxxxxx----------
 
 
-![alt text](2u.png)
+![alt text](class2-screenshots/2u.png)
 
 
 
-![alt text](2v.png)
+![alt text](class2-screenshots/2v.png)
 
 
 
@@ -608,10 +608,10 @@ AWS Secret Access Key :- ─────
 
 
 
-![alt text](2w.png)
+![alt text](class2-screenshots/2w.png)
 
 
-![alt text](2x.png)
+![alt text](class2-screenshots/2x.png)
 
 
 
@@ -663,7 +663,7 @@ Here is the transcribed text from your image:
 
 
 
-![alt text](2y.png)
+![alt text](class2-screenshots/2y.png)
 
 
 
@@ -692,7 +692,7 @@ Here is the transcribed text from your image:
 ---------xxxxxxxxxxxx--------
 
 
-![alt text](2z.png)
+![alt text](class2-screenshots/2z.png)
 
 
 ---
@@ -731,3 +731,7 @@ EC2FullAccess                 EC2ReadOnly
 
 
 __________XXXXXXXXXX___________
+
+
+
+post lab cleanup
