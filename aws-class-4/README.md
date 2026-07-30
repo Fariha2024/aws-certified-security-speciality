@@ -1,7 +1,7 @@
 
 
 ---
-
+### Class 4
 ## Lab 1: Granular S3 Access Control Using IAM & Bucket Policies
 
 ### **Primary Objective**

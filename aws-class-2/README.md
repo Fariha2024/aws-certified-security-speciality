@@ -19,7 +19,31 @@
 
 ---
 
-Here is the transcribed text formatted clean and structured in Markdown:
+### Overall Security Skills Gained From Class-02
+
+After completing this lab, I can demonstrate knowledge of:
+
+✅ IAM user management
+
+✅ IAM group management
+
+✅ Least privilege implementation
+
+✅ AWS managed policies
+
+✅ Permission troubleshooting
+
+✅ Role-based access control
+
+✅ AWS CLI authentication
+
+✅ Access key management
+
+✅ Permission boundaries
+
+✅ Cloud security governance
+
+
 
 ---
 
@@ -734,4 +758,415 @@ __________XXXXXXXXXX___________
 
 
 
-post lab cleanup
+## post lab cleanup
+
+
+Your Class-02 documentation is already structured well for a GitHub lab repository. For **post-lab cleanup**, you should document it because in a real AWS security role, cleanup is part of **cloud governance, cost control, and security hygiene**. Even if you did not face errors, documenting cleanup proves you understand the complete lifecycle: **create → test → validate → remove resources**.
+
+Add this section at the end of Class-02:
+
+---
+
+# Post Lab Cleanup — Class-02 IAM Security Lab
+
+## Purpose
+
+After completing IAM experiments, remove unnecessary users, access keys, policies, and resources to maintain AWS account security and avoid unauthorized access.
+
+---
+
+# Cleanup Order
+
+```text
+                 AWS IAM LAB CLEANUP
+
+                         │
+
+                         ▼
+
+        1. Remove Access Keys (CLI Users)
+
+                         │
+
+                         ▼
+
+        2. Delete IAM Users
+
+                         │
+
+                         ▼
+
+        3. Delete IAM Groups
+
+                         │
+
+                         ▼
+
+        4. Remove Custom Policies / Permissions
+
+                         │
+
+                         ▼
+
+        5. Terminate EC2 Resources
+
+                         │
+
+                         ▼
+
+        6. Delete S3 Test Bucket
+
+```
+
+---
+
+# Step 1: Remove CLI Access Keys
+
+### Navigate:
+
+```
+IAM
+ │
+ └── Users
+       │
+       └── User-CLI-01
+              │
+              └── Security Credentials
+                     │
+                     └── Access Keys
+                            │
+                            └── Delete Access Key
+```
+
+### Reason:
+
+Access keys provide programmatic access to AWS.
+
+Removing unused keys prevents:
+
+* Unauthorized AWS CLI access
+* Credential leakage
+* Accidental resource creation
+
+---
+
+# Step 2: Delete IAM Users
+
+Delete temporary users created during the lab.
+
+Users:
+
+```
+ProdAdmin
+
+Richard
+
+John
+
+User-IT-01
+
+User-IT-02
+
+User-CLI-01
+```
+
+### Navigation:
+
+```
+IAM
+ │
+ └── Users
+        │
+        └── Select User
+                │
+                └── Delete User
+```
+
+### Reason:
+
+Unused IAM accounts increase security risk and violate the principle of least privilege.
+
+---
+
+# Step 3: Delete IAM Groups
+
+Delete the test group:
+
+```
+IT-Group
+```
+
+Navigation:
+
+```
+IAM
+
+ ↓
+
+User Groups
+
+ ↓
+
+IT-Group
+
+ ↓
+
+Delete Group
+```
+
+### Reason:
+
+Groups should only exist when actively managing users and permissions.
+
+---
+
+# Step 4: Remove Permission Boundary
+
+If a permission boundary was created:
+
+```
+IAM
+
+ ↓
+
+Users
+
+ ↓
+
+Richard
+
+ ↓
+
+Permissions
+
+ ↓
+
+Remove Permission Boundary
+```
+
+### Reason:
+
+Temporary security restrictions created for testing should be removed after validation.
+
+---
+
+# Step 5: Remove Test EC2 Instance
+
+The EC2 instance created during permission testing:
+
+```
+Webserver
+```
+
+Navigation:
+
+```
+EC2
+
+ ↓
+
+Instances
+
+ ↓
+
+Select Webserver
+
+ ↓
+
+Instance State
+
+ ↓
+
+Terminate Instance
+```
+
+### Reason:
+
+EC2 instances continue generating costs if left running.
+
+---
+
+# Step 6: Delete S3 Test Bucket
+
+Bucket created during CLI testing:
+
+```
+mybucket
+```
+
+Command:
+
+```bash
+aws s3 rb s3://mybucket --force
+```
+
+or AWS Console:
+
+```
+S3
+
+ ↓
+
+Select Bucket
+
+ ↓
+
+Empty Bucket
+
+ ↓
+
+Delete Bucket
+```
+
+### Reason:
+
+Test buckets may contain uploaded files or sensitive data.
+
+---
+
+# Step 7: Verify Remaining IAM Resources
+
+Final verification:
+
+```
+IAM Dashboard
+
+Check:
+
+✓ No unnecessary users
+
+✓ No unused access keys
+
+✓ No temporary groups
+
+✓ No excessive permissions
+
+✓ No unused policies
+
+```
+
+---
+
+# Security Practice Learned
+
+By performing cleanup after the IAM lab, I learned:
+
+* Identity lifecycle management
+* Removal of unused credentials
+* Cloud account hygiene
+* Least privilege maintenance
+* Prevention of unauthorized AWS access
+* AWS resource cost management
+
+---
+
+
+## Lab 2: Create Read-Only Users (Richard & John)
+AWS Concept Learned:
+Least Privilege Principle
+IAM Managed Policies
+Read-only access control
+AWS Policies Used:
+EC2ReadOnlyAccess
+S3ReadOnlyAccess
+CloudWatchReadOnlyAccess
+Real-World Problem:
+
+Developers or auditors need to view resources but should not modify production infrastructure.
+
+
+
+## Lab 3: Testing User Permission Restrictions
+AWS Concept Learned:
+Permission validation
+Access denied troubleshooting
+IAM policy enforcement
+Real-World Problem:
+
+A user attempts an action that is outside their job responsibility.
+
+Example:
+
+Richard tries to create an EC2 instance but receives an access denied error.
+
+
+
+
+## Lab 4: Modify User Permissions (Read Only → Full Access)
+AWS Concept Learned:
+Policy modification
+Permission updates
+Privilege management
+Real-World Problem:
+
+An employee receives a promotion and requires additional AWS permissions.
+
+
+
+
+## Lab 5: IAM Groups (IT-Group)
+AWS Concept Learned:
+Role-based access control (RBAC)
+Group-based permission management
+Policies Applied:
+EC2FullAccess
+S3FullAccess
+RDSFullAccess
+EFSFullAccess
+ECSFullAccess
+EKSFullAccess
+VPCFullAccess
+Real-World Problem:
+
+Managing permissions individually for hundreds of employees is difficult.
+
+Solution:
+
+Create groups and assign permissions once.
+
+
+
+## Lab 6: IAM Programmatic Access User (AWS CLI)
+AWS Concept Learned:
+Access Keys
+AWS CLI authentication
+Programmatic access
+Commands Practiced:
+aws configure
+
+aws s3 ls
+
+aws s3 mb s3://mybucket
+
+aws s3 cp file.txt s3://mybucket
+
+aws s3 rb s3://mybucket --force
+Real-World Problem:
+
+Applications and automation tools need AWS access without logging into the AWS Console.
+
+
+
+
+## Lab 7: Permission Boundary
+AWS Concept Learned:
+Permission boundaries
+Security guardrails
+Privilege escalation prevention
+Real-World Problem:
+
+An administrator gives a user powerful permissions, but security policy should limit the maximum permission level.
+
+Example:
+
+User Permission:
+
+EC2FullAccess
+
+Permission Boundary:
+
+EC2ReadOnlyAccess
+
+Result:
+
+User cannot perform actions beyond the boundary.

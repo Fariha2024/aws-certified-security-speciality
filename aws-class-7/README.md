@@ -3,7 +3,7 @@
 
 
 ---
-
+#### Class 7
 ## 🎯 Lab Objectives
 
 1. **AWS S3 CORS (Cross-Origin Resource Sharing):**

@@ -1,7 +1,7 @@
 
 
 ---
-
+### Class 5
 ## **1. Lab Objective**
 
 The primary goal of this lab was to demonstrate **Data Protection at Rest** and enforce **Least Privilege Access Control** using **AWS KMS (Key Management Service)** integrated with **Amazon S3**.
