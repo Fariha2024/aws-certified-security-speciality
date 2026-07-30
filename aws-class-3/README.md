@@ -575,6 +575,382 @@ graph TD
 * **Upload file** $\longrightarrow$ **(Yes $\checkmark$)**
 * **Delete file** $\longrightarrow$ **(No $\mathbf{\times}$)**
 
+
+
+
+
+
+That's a good way to learn AWS IAM. Instead of trying to memorize everything, complete each lab one at a time and verify the result before moving to the next.
+
+
+
+
+
+
+
+# Lab 1 – IAM Policy for S3 (Beginner)
+
+## Goal
+
+Create an IAM user that:
+
+* Can see all S3 buckets.
+* Can access only one specific bucket.
+* Cannot delete objects.
+
+---
+
+## Part 1 – Create an IAM User
+
+1. Sign in as the AWS account root user or administrator.
+2. Open **IAM**.
+3. Click **Users**.
+4. Click **Create user**.
+5. Name the user:
+
+```
+John
+```
+
+6. Enable **Provide user access to the AWS Management Console**.
+7. Create a password.
+8. Finish creating the user.
+
+---
+
+## Part 2 – Create an S3 Bucket
+
+1. Open **S3**.
+2. Click **Create bucket**.
+3. Bucket name:
+
+```
+techgg-13-june-26
+```
+
+4. Keep default settings.
+5. Click **Create bucket**.
+6. Upload two small files.
+
+Example:
+
+```
+notes.txt
+image.jpg
+```
+
+---
+
+## Part 3 – Create a Policy (Visual Editor)
+
+1. Open **IAM**
+2. Click **Policies**
+3. Click **Create Policy**
+4. Choose **Visual**
+
+Choose:
+
+**Service**
+
+```
+S3
+```
+
+Access Level
+
+```
+List
+```
+
+Select
+
+```
+✔ ListAllMyBuckets
+✔ ListBucket
+```
+
+Resources
+
+```
+Bucket → Any
+Access Point → Any
+```
+
+Click **Next**
+
+Policy Name
+
+```
+TechGG-S3-TestPolicy
+```
+
+Create Policy.
+
+---
+
+## Part 4 – Attach the Policy
+
+Go to
+
+```
+IAM
+→ Users
+→ John
+→ Add Permissions
+→ Attach Policies
+```
+
+Select
+
+```
+TechGG-S3-TestPolicy
+```
+
+Click **Add permissions**.
+
+---
+
+## Test
+
+Login as **John**.
+
+Open **S3**.
+
+Expected:
+
+✅ Can see bucket names.
+
+---
+
+## Part 5 – Restrict to One Bucket
+
+Create another policy using JSON.
+
+Replace the bucket ARN with your bucket.
+
+Attach this policy to **John**.
+
+Remove the old policy first.
+
+Test again.
+
+Expected:
+
+* Can open only your bucket.
+* Cannot access other buckets.
+* Can upload files (if allowed).
+* Cannot delete files.
+
+---
+
+## Post Lab Cleanup
+
+Resources removed after testing:
+
+- Deleted IAM user John
+- Removed attached S3 permissions
+- Deleted custom IAM policies
+- Removed S3 bucket objects
+- Deleted S3 bucket
+
+Purpose:
+Prevent unnecessary AWS resource usage and maintain account security.
+
+
+-------------xxxxxxxxxxxxx---------------
+---
+
+
+# Lab 2 – ABAC (Attribute-Based Access Control)
+
+## Goal
+
+Allow a user to manage an EC2 instance only when the user's tag matches the EC2 tag.
+
+---
+
+## Part 1 – Create an EC2 Instance
+
+Open
+
+```
+EC2
+→ Launch Instance
+```
+
+Instance Name
+
+```
+WebServer
+```
+
+Add Tag
+
+| Key     | Value   |
+| ------- | ------- |
+| Project | Website |
+
+Security Group
+
+Allow
+
+* SSH
+* HTTP
+
+Launch the instance.
+
+---
+
+## Part 2 – Tag the IAM User
+
+Open
+
+```
+IAM
+→ Users
+→ John
+```
+
+Go to
+
+```
+Tags
+```
+
+Add
+
+| Key     | Value   |
+| ------- | ------- |
+| Project | Website |
+
+Save.
+
+---
+
+## Part 3 – Create ABAC Policy
+
+Open
+
+```
+IAM
+→ Policies
+→ Create Policy
+```
+
+Choose
+
+```
+JSON
+```
+
+Paste the ABAC policy from your lab.
+
+Create policy
+
+```
+ABAC-EC2-Project-Policy
+```
+
+---
+
+## Part 4 – Attach Policy
+
+Open
+
+```
+IAM
+→ Users
+→ John
+```
+
+Attach
+
+```
+ABAC-EC2-Project-Policy
+```
+
+---
+
+## Test
+
+Login as **John**.
+
+Go to
+
+```
+EC2
+```
+
+Try
+
+* Start instance
+* Stop instance
+
+Expected:
+
+✅ Allowed because both have
+
+```
+Project = Website
+```
+
+---
+
+## Part 5 – Test Mismatch
+
+Create another EC2 instance.
+
+Name
+
+```
+WebApp
+```
+
+Tag
+
+| Key     | Value |
+| ------- | ----- |
+| Project | XXX   |
+
+Login again as **John**.
+
+Try stopping it.
+
+Expected:
+
+❌ Access Denied
+
+Reason:
+
+```
+User Tag = Website
+Instance Tag = XXX
+```
+
+The tags do not match.
+
+---
+
+
+
+
+
+
+
+## post lab cleanup
+
+
+1. Remove IAM User Permissions
+          ↓
+2. Delete IAM User (John)
+          ↓
+3. Delete IAM Policies
+          ↓
+4. Delete S3 Bucket Objects
+          ↓
+5. Delete S3 Bucket
+
+
 -----------xxxxxxxxxx----------
 
 
@@ -832,6 +1208,19 @@ graph TD
 > **Tag Mismatching Result:**
 > $\text{Not Matched} \longrightarrow \begin{matrix} \text{Resource/Machine} & & \text{User} \\ \downarrow & & \downarrow \\ \text{Tags} & \longleftrightarrow & \text{Tags} \end{matrix}$
 > $\left. \begin{array}{l} \text{Stop (No } \mathbf{\times} \text{)} \end{array} \right\} \text{\textbf{Tags Not Matched }} \mathbf{\times}$
+
+
+
+
+
+## Post Lab Cleanup
+
+- Terminated all EC2 test instances.
+- Removed Project tags from IAM user.
+- Detached ABAC policy from IAM user.
+- Deleted temporary IAM ABAC policy.
+- Removed unused security group.
+- Verified that no unnecessary AWS resources remained.
 
 
 -----------xxxxxxxxxxx------------
@@ -1160,3 +1549,253 @@ graph TD
 * `tech-S3-bucketlist-13-june-26`
 * `ABAC-EC2-Project-Policy-1`
 * `AllowAssumeDeveloperRole` *(if saved as a managed policy rather than inline)*
+
+
+
+--------------xxxxxxxxxxxxx-----------
+
+
+
+
+# Lab 3 – RBAC (Role-Based Access Control)
+
+## Goal
+
+Create a user that temporarily becomes an administrator by assuming a role.
+
+---
+
+## Part 1 – Create User
+
+Open
+
+```
+IAM
+→ Users
+→ Create User
+```
+
+Name
+
+```
+Dev-User
+```
+
+Create the user.
+
+---
+
+## Part 2 – Create Role
+
+Open
+
+```
+IAM
+→ Roles
+→ Create Role
+```
+
+Select
+
+```
+AWS Account
+```
+
+Choose
+
+```
+This Account
+```
+
+Attach policies
+
+```
+AmazonEC2FullAccess
+AmazonS3FullAccess
+```
+
+Role Name
+
+```
+Developer-Role
+```
+
+Create Role.
+
+---
+
+## Part 3 – Copy the Role ARN
+
+Open
+
+```
+IAM
+→ Roles
+→ Developer-Role
+```
+
+Copy
+
+```
+Role ARN
+```
+
+It looks similar to:
+
+```
+arn:aws:iam::123456789012:role/Developer-Role
+```
+
+---
+
+## Part 4 – Allow the User to Assume the Role
+
+Open
+
+```
+IAM
+→ Users
+→ Dev-User
+→ Add Permissions
+→ Create Inline Policy
+```
+
+Choose
+
+```
+JSON
+```
+
+Paste the AssumeRole policy.
+
+Replace
+
+```
+Resource
+```
+
+with the copied Role ARN.
+
+Save the policy.
+
+---
+
+## Part 5 – Update the Role Trust Policy
+
+Open
+
+```
+IAM
+→ Roles
+→ Developer-Role
+→ Trust Relationships
+→ Edit Trust Policy
+```
+
+Allow
+
+```
+Dev-User
+```
+
+to perform
+
+```
+sts:AssumeRole
+```
+
+This creates the required two-way relationship:
+
+* The user has permission to assume the role.
+* The role trusts the user.
+
+---
+
+## Part 6 – Test
+
+Login as
+
+```
+Dev-User
+```
+
+Initially, the user has very limited permissions.
+
+Switch to the role:
+
+```
+Top Right
+→ Username
+→ Switch Role
+```
+
+Enter
+
+* Account ID
+* Role Name
+
+```
+Developer-Role
+```
+
+Click **Switch Role**.
+
+---
+
+## Part 7 – Verify
+
+While using **Developer-Role**:
+
+Go to **EC2**.
+
+Try:
+
+* Launch an instance
+* Stop an instance
+* Terminate an instance
+
+Go to **S3**.
+
+Try:
+
+* Create a bucket
+* Upload files
+* Delete a bucket
+
+Expected:
+
+✅ All actions succeed because the role has `AmazonEC2FullAccess` and `AmazonS3FullAccess`.
+
+When you switch back to **Dev-User**, those elevated permissions disappear because role access is temporary.
+
+---
+
+
+
+## Post Lab Cleanup
+
+* Delete the **Dev-User** IAM user created for the lab.
+* Delete the **Developer-Role** IAM role.
+* Remove any **inline policies** attached to **Dev-User**.
+* Delete any **customer-managed IAM policies** created specifically for this lab (if any).
+* Terminate all **EC2 instances** launched during testing.
+* Delete all **S3 buckets** and objects created for testing.
+* Remove any temporary **access keys** created for **Dev-User** (if created).
+* Sign out of the **Developer-Role** session and switch back to your original IAM user.
+* Verify that no unused IAM users, roles, policies, EC2 instances, or S3 buckets remain in the AWS account.
+* Confirm that all temporary resources have been deleted to avoid unnecessary AWS charges and maintain a secure environment.
+
+
+
+
+
+# Practice Order
+
+I recommend practicing in this sequence:
+
+1. **Lab 1 (S3 IAM Policies)** – Learn IAM users, managed/custom policies, and least privilege.
+2. **Lab 2 (ABAC)** – Learn how tags control access to resources.
+3. **Lab 3 (RBAC)** – Learn roles, trust policies, STS, and temporary privilege escalation.
+
+This progression builds from basic IAM permissions to more advanced access-control models.
+
