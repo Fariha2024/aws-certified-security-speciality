@@ -1117,3 +1117,301 @@ $$\text{User Sign-Up / Sign-In (Cognito)} \longrightarrow \text{API Gateway Endp
 
 
 =========xxxxxxxxxxx===========
+
+
+lambda code for love
+
+
+
+import random
+
+def lambda_handler(event, context):
+
+    love_percent = random.randint(85, 100)
+
+    html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>❤️ Love Couple ❤️</title>
+
+<style>
+
+*{{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}}
+
+body{{
+overflow:hidden;
+height:100vh;
+background:url('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1600&q=80');
+background-size:cover;
+background-position:center;
+}}
+
+.overlay{{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.45);
+}}
+
+.container{{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:700px;
+padding:40px;
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(15px);
+border-radius:25px;
+color:white;
+text-align:center;
+box-shadow:0 0 30px hotpink;
+}}
+
+h1{{
+font-size:55px;
+animation:beat 1s infinite;
+}}
+
+@keyframes beat{{
+50%{{transform:scale(1.08);}}
+}}
+
+input{{
+width:85%;
+padding:15px;
+margin:10px;
+border:none;
+border-radius:30px;
+font-size:18px;
+text-align:center;
+}}
+
+button{{
+padding:15px 35px;
+border:none;
+border-radius:30px;
+font-size:20px;
+background:#ff0066;
+color:white;
+cursor:pointer;
+}}
+
+button:hover{{
+background:red;
+}}
+
+#result{{
+font-size:40px;
+margin-top:20px;
+font-weight:bold;
+color:yellow;
+}}
+
+.quote{{
+margin-top:20px;
+font-size:22px;
+color:#fff;
+}}
+
+.message{{
+margin-top:20px;
+font-size:18px;
+}}
+
+.footer{{
+margin-top:25px;
+font-size:20px;
+color:pink;
+}}
+
+.heart{{
+position:absolute;
+color:red;
+animation:fall linear infinite;
+}}
+
+@keyframes fall{{
+0%{{transform:translateY(-100px);}}
+100%{{transform:translateY(110vh);}}
+}}
+
+.star{{
+position:absolute;
+width:3px;
+height:3px;
+background:white;
+border-radius:50%;
+animation:blink 2s infinite;
+}}
+
+@keyframes blink{{
+50%{{opacity:.2;}}
+}}
+
+.firework{{
+position:absolute;
+width:6px;
+height:6px;
+border-radius:50%;
+background:yellow;
+animation:boom 2s infinite;
+}}
+
+@keyframes boom{{
+0%{{transform:scale(.1);opacity:1;}}
+100%{{transform:scale(20);opacity:0;}}
+}}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="container">
+
+<h1>❤️ Love Couple ❤️</h1>
+
+<p style="font-size:25px;">🌹 Forever Together 🌹</p>
+
+<br>
+
+<input id="boy" placeholder="Boy Name">
+
+<input id="girl" placeholder="Girl Name">
+
+<br>
+
+<button onclick="calculate()">❤️ Calculate Love ❤️</button>
+
+<div id="result"></div>
+
+<div class="quote">
+
+💖 "Love is not finding someone to live with,
+it's finding someone you can't live without."
+
+</div>
+
+<div class="message">
+
+🌹 This Web Page Is Hosted On AWS Cloud And Created By Fariha Ji Nizam For The Purpose Of Testing The Successfully Deployment Of Love Couple Calculator❤️<br>
+💖 Hearts beat together ❤️<br>
+💕 Every love story is beautiful,<br>
+💕 Thankyou All - Fatima,Ali,Ibrahim,<br>
+
+But yours is my favorite.
+
+</div>
+
+<div style="font-size:70px;margin-top:25px;">
+
+❤️ 🌹 💖 🌹 ❤️
+
+</div>
+
+<div class="footer">
+
+Made with ❤️ using AWS Lambda
+
+</div>
+
+</div>
+
+<audio autoplay loop>
+<source src="https://mybucket-oshin-love.s3.ap-south-1.amazonaws.com/Shreya_Ghoshal_-_Manwa_Laage_(mp3.pm).mp3" type="audio/mp3.pm">
+</audio>
+
+<script>
+
+function calculate(){{
+
+var boy=document.getElementById("boy").value;
+var girl=document.getElementById("girl").value;
+
+if(boy=="" || girl==""){{
+alert("Enter both names ❤️");
+return;
+}}
+
+var love=Math.floor(Math.random()*16)+85;
+
+document.getElementById("result").innerHTML=
+
+"❤️ "+boy+" + "+girl+
+"<br><br>"+love+"% Love 💖";
+
+}}
+
+for(let i=0;i<80;i++){{
+
+let h=document.createElement("div");
+
+h.innerHTML="❤️";
+
+h.className="heart";
+
+h.style.left=Math.random()*100+"vw";
+
+h.style.fontSize=(15+Math.random()*35)+"px";
+
+h.style.animationDuration=(5+Math.random()*10)+"s";
+
+document.body.appendChild(h);
+
+}}
+
+for(let i=0;i<100;i++){{
+
+let s=document.createElement("div");
+
+s.className="star";
+
+s.style.left=Math.random()*100+"vw";
+
+s.style.top=Math.random()*100+"vh";
+
+document.body.appendChild(s);
+
+}}
+
+for(let i=0;i<6;i++){{
+
+let f=document.createElement("div");
+
+f.className="firework";
+
+f.style.left=Math.random()*100+"vw";
+
+f.style.top=Math.random()*100+"vh";
+
+document.body.appendChild(f);
+
+}}
+
+</script>
+
+</body>
+</html>
+
+"""
+
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "text/html"
+        },
+        "body": html
+    }
