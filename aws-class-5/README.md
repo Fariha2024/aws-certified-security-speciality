@@ -634,3 +634,345 @@ Step 3: Delete IAM Users
 
 
 ==========xxxxxxxxxxxx==============
+
+
+
+---
+
+# Lab Objective
+
+The objective of this lab is to learn how to protect data stored in an Amazon S3 bucket using AWS KMS (Key Management Service).
+
+In this lab, two IAM users are created:
+
+* **John** has both S3 read permission and KMS key permission, so he can access encrypted files.
+* **Bob** has S3 read permission only, but no KMS key permission, so he cannot access the encrypted files.
+
+This demonstrates that access to encrypted S3 objects requires **both S3 permissions and KMS decrypt permissions**, providing stronger security for sensitive data. 
+
+
+
+---
+
+# Beginner Level Steps – AWS KMS + S3 Data Protection Lab
+
+## Objective
+
+Learn how AWS KMS protects S3 files so that:
+
+* **John** can download encrypted files.
+* **Bob** cannot download them because he doesn't have KMS key permission. 
+
+---
+
+# Step 1: Create an Administrator User
+
+1. Login to AWS as the Root User.
+2. Open **IAM**.
+3. Click **Users**.
+4. Click **Create user**.
+5. Enter username:
+
+   ```
+   ProdAdmin
+   ```
+6. Click **Next**.
+7. Select
+
+   ```
+   Attach policies directly
+   ```
+8. Search for
+
+   ```
+   AdministratorAccess
+   ```
+9. Select the policy.
+10. Click **Next**.
+11. Click **Create user**. 
+
+---
+
+# Step 2: Create User Bob
+
+1. Open **IAM → Users**.
+2. Click **Create user**.
+3. Username:
+
+   ```
+   Bob
+   ```
+4. Click **Next**.
+5. Attach policy:
+
+   ```
+   AmazonS3ReadOnlyAccess
+   ```
+6. Click **Create user**. 
+
+---
+
+# Step 3: Create User John
+
+1. Open **IAM → Users**.
+2. Click **Create user**.
+3. Username:
+
+   ```
+   John
+   ```
+4. Click **Next**.
+5. Attach policy:
+
+   ```
+   AmazonS3ReadOnlyAccess
+   ```
+6. Click **Create user**. 
+
+---
+
+# Step 4: Create an S3 Bucket
+
+1. Open **S3**.
+2. Click **Create bucket**.
+3. Bucket name:
+
+   ```
+   my-bucket-29-june-26
+   ```
+4. Leave other settings as default.
+5. Click **Create bucket**. 
+
+---
+
+# Step 5: Create a KMS Key
+
+1. Open **KMS**.
+2. Click **Customer managed keys**.
+3. Click **Create key**.
+
+Choose:
+
+* Key type
+
+  ```
+  Symmetric
+  ```
+
+* Key usage
+
+  ```
+  Encrypt and decrypt
+  ```
+
+Alias
+
+```
+Tech-GG-Data-Encryption
+```
+
+Description
+
+```
+Training demo
+```
+
+Click **Next**.
+
+Under **Key Administrators**
+
+* Select
+
+  ```
+  ProdAdmin
+  ```
+
+Click **Next**.
+
+Under **Key Users**
+
+* ✅ Select **John**
+* ❌ Do NOT select **Bob**
+
+Click **Finish**. 
+
+---
+
+# Step 6: Copy the Key ARN
+
+1. Open the newly created KMS key.
+2. Copy the
+
+   ```
+   Key ARN
+   ```
+3. Save it in Notepad. You'll need it later. 
+
+---
+
+# Step 7: Enable Key Rotation
+
+1. Open the KMS key.
+2. Select
+
+   ```
+   Key material and rotation
+   ```
+3. Click
+
+   ```
+   Edit
+   ```
+4. Enable
+
+   ```
+   Automatic key rotation
+   ```
+5. Set rotation period:
+
+   ```
+   180 Days
+   ```
+6. Save changes. 
+
+---
+
+# Step 8: Enable KMS Encryption on the S3 Bucket
+
+1. Open **S3**.
+2. Select your bucket.
+3. Go to **Properties**.
+4. Scroll to
+
+   ```
+   Default encryption
+   ```
+5. Click **Edit**.
+6. Choose
+
+   ```
+   Server-side encryption using AWS KMS keys (SSE-KMS)
+   ```
+7. Paste the Key ARN you copied earlier.
+8. Save changes. 
+
+---
+
+# Step 9: Upload Files
+
+1. Open the bucket.
+2. Click **Upload**.
+3. Select two files from your computer.
+4. Click **Upload**. 
+
+---
+
+# Step 10: Login as John
+
+1. Open a new browser or Incognito window.
+2. Login as **John**.
+3. Open **S3**.
+4. Open the bucket.
+5. Open or download a file.
+
+**Expected Result**
+
+✅ John can:
+
+* View bucket
+* View files
+* Download files 
+
+---
+
+# Step 11: Login as Bob
+
+1. Open another browser or Incognito window.
+2. Login as **Bob**.
+3. Open **S3**.
+4. Try to open the bucket or download a file.
+
+**Expected Result**
+
+❌ Bob receives:
+
+```
+Access Denied
+```
+
+Bob cannot decrypt the files because he was **not added as a KMS Key User**, even though he has S3 read access. 
+
+---
+
+# Lab Result
+
+| User | S3 Permission | KMS Permission | Can Download? |
+| ---- | ------------- | -------------- | ------------- |
+| John | ✅ Yes         | ✅ Yes          | ✅ Yes         |
+| Bob  | ✅ Yes         | ❌ No           | ❌ No          |
+
+---
+
+# Cleanup (Optional)
+
+1. Empty and delete the S3 bucket.
+2. Schedule deletion of the KMS key.
+3. Delete the IAM users:
+
+   * John
+   * Bob
+   * ProdAdmin 
+
+
+
+
+
+
+
+---
+
+# Key Takeaways
+
+* **SSE-KMS encryption** protects data stored in Amazon S3.
+* Accessing an encrypted S3 object requires two permissions:
+
+  * **S3 permission** (`s3:GetObject`)
+  * **KMS permission** (`kms:Decrypt`)
+* Simply giving a user S3 Read access is **not enough** to open encrypted files.
+* Adding a user as a **KMS Key User** allows them to decrypt and access encrypted objects.
+* Excluding a user from the KMS Key Users list prevents them from accessing encrypted data, even if they have S3 permissions.
+* **Automatic key rotation** improves security by periodically generating new cryptographic material without changing the Key ARN or requiring manual re-encryption of existing data. 
+
+---
+
+# Post-Lab Cleanup
+
+To avoid unnecessary AWS charges and keep your account clean, perform the following steps:
+
+### Step 1: Delete the S3 Bucket
+
+* Open **S3 Console**.
+* Select the bucket (`my-bucket-29-june-26`).
+* Empty the bucket.
+* Delete the bucket.
+
+### Step 2: Schedule KMS Key Deletion
+
+* Open **AWS KMS**.
+* Go to **Customer Managed Keys**.
+* Select the KMS key (`Tech-GG-Data-Encryption`).
+* Choose **Key actions → Schedule key deletion**.
+* Select a waiting period (7–30 days).
+* Confirm the deletion schedule.
+
+> **Note:** AWS KMS keys cannot be deleted immediately. They remain in **Pending Deletion** until the waiting period ends.
+
+### Step 3: Delete IAM Users
+
+* Open **IAM Console**.
+* Go to **Users**.
+* Delete the following users:
+
+  * `John`
+  * `Bob`
+  * `ProdAdmin` 
