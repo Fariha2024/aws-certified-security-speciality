@@ -914,3 +914,385 @@ ls /backup-test
 
 
 ------------xxxxxxxxxxxx------------
+
+
+
+
+# Class 08 – AWS Site-to-Site VPN & AWS Backup Lab
+
+## Lab 1: AWS Site-to-Site VPN
+
+# Objective
+
+The objective of this lab is to learn how to securely connect an on-premises network (customer location) with an AWS VPC using an AWS Site-to-Site VPN. This allows private communication between on-premises resources and AWS resources over an encrypted IPsec tunnel.
+
+---
+
+# Real-World Scenario
+
+A company has its own office network with servers and employees working from an on-premises data center. The company wants to access AWS resources without exposing traffic to the public internet.
+
+Using AWS Site-to-Site VPN:
+
+* Office users can securely access AWS resources.
+* Data travels through an encrypted tunnel.
+* Sensitive business applications remain protected.
+* Hybrid Cloud architecture can be implemented.
+
+Examples:
+
+* Banks connecting branches to AWS.
+* Hospitals connecting internal systems to cloud applications.
+* Enterprises extending their data center into AWS.
+
+---
+
+# Beginner-Level Lab Flow
+
+### Step 1: Verify Default VPC
+
+* Open VPC Console.
+* Navigate to **Your VPCs**.
+* Verify the Default VPC exists.
+
+### Step 2: Create Customer Gateway (CGW)
+
+* Navigate to **Customer Gateways**.
+* Create a Customer Gateway.
+* Enter:
+
+  * Name: `Techgg-CGW`
+  * ASN: `65000`
+  * Public IP: `192.200.100.1`
+  * Device: Cisco ASA 5500
+
+### Step 3: Create Virtual Private Gateway (VGW)
+
+* Navigate to **Virtual Private Gateways**.
+* Create:
+
+  * Name: `My-Virtual-Private-Gateway`
+  * ASN: Amazon Default ASN
+
+### Step 4: Attach VGW to VPC
+
+* Select VGW.
+* Click **Attach to VPC**.
+* Choose Default VPC.
+
+### Step 5: Create Site-to-Site VPN Connection
+
+* Navigate to **Site-to-Site VPN Connections**.
+* Create VPN:
+
+  * Name: `VPN-Mumbai-Default-VPC`
+  * Target Gateway: VGW
+  * Customer Gateway: Existing CGW
+  * Routing: Dynamic (BGP)
+
+### Step 6: Download VPN Configuration
+
+* Open VPN Connection.
+* Download Configuration.
+* Select:
+
+  * Vendor: Cisco Systems
+  * Platform: ASA 5500
+
+### Step 7: Apply Router Configuration
+
+* Apply downloaded configuration on the customer router.
+* VPN tunnel becomes operational.
+
+---
+
+# Key Takeaways
+
+* AWS Site-to-Site VPN creates a secure connection between AWS and on-premises networks.
+* Customer Gateway represents the customer router.
+* Virtual Private Gateway represents AWS side VPN endpoint.
+* IPsec tunnels encrypt traffic.
+* Dynamic routing uses BGP.
+* VPN enables Hybrid Cloud architecture.
+* No need to expose private resources directly to the internet.
+
+---
+
+# Post-Lab Cleanup
+
+### Delete VPN Connection
+
+* VPC → Site-to-Site VPN Connections
+* Select `VPN-Mumbai-Default-VPC`
+* Delete
+
+### Detach and Delete VGW
+
+* Virtual Private Gateways
+* Detach from VPC
+* Delete `My-Virtual-Private-Gateway`
+
+### Delete Customer Gateway
+
+* Customer Gateways
+* Delete `Techgg-CGW`
+
+### Verification
+
+* No VPN Connections remaining.
+* No VGW remaining.
+* No Customer Gateway remaining.
+
+---
+
+# Lab 2: AWS Backup (On-Demand Backup & Restore)
+
+# Objective
+
+The objective of this lab is to learn how to:
+
+* Create an EC2 backup using AWS Backup.
+* Store backups inside a Backup Vault.
+* Verify recovery points and snapshots.
+* Restore an EC2 instance after accidental deletion.
+* Protect business data from loss.
+
+---
+
+# Real-World Scenario
+
+A production EC2 server hosts a company website or application.
+
+If someone accidentally:
+
+* Deletes the EC2 instance
+* Corrupts files
+* Causes system failure
+
+AWS Backup allows administrators to:
+
+* Restore the server quickly.
+* Recover important files.
+* Reduce downtime.
+* Maintain business continuity.
+
+Examples:
+
+* Website recovery after accidental deletion.
+* Disaster recovery planning.
+* Compliance and data retention requirements.
+* Production workload protection.
+
+---
+
+# Beginner-Level Lab Flow
+
+### Step 1: Launch EC2 Instance
+
+Create:
+
+* Instance Name: `Linux-Server-Backup`
+* Default VPC
+* Public IP Enabled
+* Security Group:
+
+  * SSH
+  * HTTP
+
+### Step 2: Create Test Data
+
+Connect to server and run:
+
+```bash
+sudo su
+mkdir /backup-test
+echo "AWS Backup Lab" > /backup-test/file1.txt
+echo "Today is Backup Testing" > /backup-test/file2.txt
+ls /backup-test
+```
+
+Verify:
+
+```bash
+file1.txt
+file2.txt
+```
+
+### YOU HAVE TO PAY
+### DO NOT GO FOR THIS STEP
+### Step 3: Create Backup Vault  // AWS WILL CHARGE FOR IT
+
+* AWS Backup
+* Vaults
+* Create Vault
+
+Configuration:
+
+* Vault Name: `EC2-Vault`
+* Encryption: aws/backup
+
+### Step 4: Create On-Demand Backup
+
+* Resource Type: EC2
+* Select Linux-Server-Backup
+* Backup Now
+* Retention: 7 Days
+* Vault: EC2-Vault
+
+### Step 5: Verify Backup Job
+
+* AWS Backup
+* Jobs
+* Backup Jobs
+
+Status should be:
+
+```text
+Completed
+```
+
+### Step 6: Verify Recovery Point
+
+* Open EC2-Vault
+* Recovery Points
+
+Verify recovery point exists.
+
+### Step 7: Verify Snapshot
+
+* EC2 Console
+* Snapshots
+
+Verify EBS Snapshot was created.
+
+### Step 8: Terminate Original Server
+
+* EC2 → Instances
+* Select Linux-Server-Backup
+* Terminate
+
+### Step 9: Restore Backup
+
+* Open Recovery Point
+* Click Restore
+
+Use:
+
+* Same Instance Type
+* Same VPC
+* Same Subnet
+* Same Security Group
+
+Start Restore Job.
+
+### Step 10: Verify Restore Job
+
+* AWS Backup
+* Restore Jobs
+
+Status:
+
+```text
+Completed
+```
+
+### Step 11: Verify Restored EC2
+
+* EC2 Console
+* Check instance is Running
+
+### Step 12: Verify Data Recovery
+
+Connect to restored instance:
+
+```bash
+ls /backup-test
+```
+
+Output:
+
+```bash
+file1.txt
+file2.txt
+```
+
+Data successfully recovered.
+
+---
+
+# Key Takeaways
+
+* AWS Backup is a centralized backup service.
+* Backup Vault stores backups securely.
+* Recovery Points are used for restoration.
+* EBS Snapshots are created during EC2 backups.
+* On-Demand Backup is manual.
+* Backup Plans are automated and commonly used in production.
+* Deleted EC2 instances can be restored from backups.
+* AWS Backup improves Disaster Recovery (DR) capabilities.
+* Data loss can be minimized with proper backup strategies.
+
+---
+
+# Post-Lab Cleanup
+
+### Delete Restored EC2 Instance
+
+* EC2 → Instances
+* Select restored server
+* Terminate
+
+### Delete Recovery Points
+
+* AWS Backup → Vaults
+* Open `EC2-Vault`
+* Recovery Points
+* Delete all recovery points
+
+### Delete Backup Vault
+
+* AWS Backup → Vaults
+* Delete `EC2-Vault`
+
+### Delete EBS Snapshots
+
+* EC2 → Snapshots
+* Delete backup snapshots created during the lab
+
+### Delete Security Group
+
+* EC2 → Security Groups
+* Delete `SG-Backup` (if not in use)
+
+### Verification Checklist
+
+✅ No EC2 instances running
+
+✅ No recovery points remaining
+
+✅ No backup vaults remaining
+
+✅ No EBS snapshots remaining
+
+✅ No unused security groups
+
+✅ No backup jobs consuming resources
+
+---
+
+# Overall Class 08 Summary
+
+This class covered two important AWS disaster recovery and hybrid networking services:
+
+1. **AWS Site-to-Site VPN**
+
+   * Securely connects on-premises networks to AWS using encrypted tunnels.
+
+2. **AWS Backup**
+
+   * Protects EC2 workloads by creating backups and restoring data when required.
+
+Together, these services help organizations build secure, reliable, and resilient cloud environments.
+
+
+----------XXXXXXXXXXXXXXX-------------

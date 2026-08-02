@@ -1182,10 +1182,245 @@ To prevent unnecessary charges on your AWS account, follow these steps in order 
 
 
 
+---
 
+# Lab Objective
 
+By completing this lab, you will learn how to:
 
+* Understand Symmetric and Asymmetric Encryption.
+* Secure sensitive information using AWS Secrets Manager.
+* Store configuration values using AWS Systems Manager Parameter Store.
+* Create and manage SSL/TLS certificates using AWS Certificate Manager (ACM).
+* Configure Route 53 DNS records.
+* Secure a website using HTTPS through an Application Load Balancer (ALB).
+* Verify encrypted communication between users and AWS-hosted applications.  
 
+---
 
+# Beginner-Level Lab Steps
 
+## Part 1 – Understand Encryption
 
+### Step 1: Learn Encryption Types
+
+* Study Symmetric Encryption.
+* Study Asymmetric Encryption.
+* Understand Public Key and Private Key concepts.
+* Understand how HTTPS secures data during transit.  
+
+---
+
+## Part 2 – AWS Secrets Manager Lab
+
+### Step 2: Create an RDS Database
+
+* Open RDS Console.
+* Create MySQL database.
+* Choose Standard Create.
+* Set Master Username: `admin`.
+* Select **Managed in AWS Secrets Manager**.
+* Create database. 
+
+### Step 3: Verify Secret Creation
+
+* Open Secrets Manager.
+* Open Secrets.
+* Confirm secret was automatically created. 
+
+### Step 4: Create Manual Secret
+
+* Open Secrets Manager.
+* Store a new secret.
+* Select Other Type of Secret.
+* Add Key-Value pairs.
+* Create secret named:
+  `ProdServer/Credentials`
+* Save secret. 
+
+### Step 5: Verify Secret
+
+* Open Secrets Manager.
+* Confirm secret exists. 
+
+---
+
+## Part 3 – Systems Manager Parameter Store
+
+### Step 6: Create Parameter
+
+* Open Systems Manager.
+* Open Parameter Store.
+* Create Parameter.
+* Name:
+  `/RDSInstances/Mumbai/Username`
+* Type:
+  `String`
+* Value:
+  `admin`
+* Save parameter. 
+
+### Step 7: Verify Parameter
+
+* Open Parameter Store.
+* Select My Parameters.
+* Confirm parameter exists. 
+
+---
+
+## Part 4 – AWS Certificate Manager (ACM) Lab
+
+### Step 8: Create Web Server
+
+* Launch Linux EC2 Instance.
+* Enable Public IP.
+* Allow:
+
+  * SSH (22)
+  * HTTP (80)
+  * HTTPS (443)
+* Deploy simple webpage. 
+
+### Step 9: Create Target Group
+
+* Target Type: Instances
+* Name: Target-Web-1
+* Protocol: HTTP
+* Port: 80
+* Register EC2 Instance.  
+
+### Step 10: Create Application Load Balancer
+
+* Create ALB.
+* Internet Facing.
+* Select Public Subnets.
+* Attach Target Group.
+* Create Load Balancer. 
+
+### Step 11: Configure Route 53
+
+* Create Hosted Zone.
+* Add Domain Name.
+* Create Alias A Record.
+* Point record to ALB. 
+
+### Step 12: Test Website
+
+* Open ALB DNS Name.
+* Verify webpage loads successfully.
+* Open domain name.
+* Observe site is accessible but not secure yet. 
+
+### Step 13: Request ACM Certificate
+
+* Open Certificate Manager.
+* Request Public Certificate.
+* Choose DNS Validation.
+* Use RSA 2048.
+* Submit request. 
+
+### Step 14: Validate Certificate
+
+* Open ACM.
+* Create Route 53 validation records.
+* Wait until certificate status becomes Issued. 
+
+### Step 15: Configure HTTPS Listener
+
+* Open ALB.
+* Add Listener.
+* Protocol: HTTPS
+* Port: 443
+* Select ACM Certificate.
+* Forward traffic to Target-Web-1. 
+
+### Step 16: Final Verification
+
+* Open:
+  `https://your-domain-name`
+* Verify secure padlock appears.
+* Verify SSL certificate is attached successfully. 
+
+---
+
+# Real-World Scenario
+
+### Problem
+
+A company hosts its website on AWS. Customers enter login credentials, personal details, and payment information. If traffic uses HTTP, attackers can intercept and read sensitive data.
+
+### Solution Using This Lab
+
+* ACM provides SSL/TLS certificates.
+* Route 53 manages domain records.
+* ALB handles HTTPS traffic.
+* Secrets Manager securely stores passwords and API keys.
+* Parameter Store stores application configuration values.
+* Encryption protects data in transit and at rest.
+
+Result:
+
+✅ Secure website access
+✅ Encrypted communication
+✅ Secure credential storage
+✅ Improved customer trust
+✅ Compliance with security best practices
+
+---
+
+# Key Takeaways
+
+* Symmetric encryption uses one key for encryption and decryption.
+* Asymmetric encryption uses Public and Private Keys.
+* HTTPS protects data while travelling over the internet.
+* Secrets Manager securely stores sensitive credentials.
+* Parameter Store stores configuration values.
+* ACM provides free SSL/TLS certificates.
+* Route 53 integrates with ACM for DNS validation.
+* ALB can terminate HTTPS traffic using ACM certificates.
+* Secure websites increase trust and improve security.  
+
+---
+
+# Post-Lab Cleanup
+
+### 1. Route 53
+
+* Delete Alias A Record.
+* Delete ACM Validation CNAME Record.
+* Delete Hosted Zone (if not required). 
+
+### 2. ACM
+
+* Delete SSL Certificate. 
+
+### 3. Load Balancer Resources
+
+* Delete ALB-1.
+* Delete Target-Web-1. 
+
+### 4. EC2
+
+* Terminate Webserver Instance. 
+
+### 5. RDS
+
+* Delete Tech-DB-server.
+* Remove final snapshot if not required. 
+
+### 6. Secrets Manager
+
+* Delete:
+
+  * ProdServer/Credentials
+  * RDS-managed secrets. 
+
+### 7. Parameter Store
+
+* Delete:
+
+  * `/RDSInstances/Mumbai/Username` 
+
+### Final Check
+
+* Ensure no EC2, RDS, ALB, ACM, Route 53, Secrets Manager, or Parameter Store resources remain running to avoid AWS charges. 

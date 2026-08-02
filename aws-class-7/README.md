@@ -684,3 +684,284 @@ To prevent unnecessary AWS billing and clear out resources created during these 
 
 
 -----------xxxxxxxxxxxx-------------
+
+
+
+# AWS S3 Labs (Class 07)
+
+**Lab Objectives**
+This lab focuses on learning how to secure, protect, and optimize data stored in Amazon S3 using CORS, Object Lock, and Storage Lifecycle Management. 
+
+---
+
+# Lab 1: AWS S3 CORS (Cross-Origin Resource Sharing)
+
+## 🎯 Objective
+
+Learn how to allow specific websites to securely access files stored in an S3 bucket while blocking unauthorized websites. 
+
+## 📝 Beginner-Level Steps
+
+### Step 1: Create an S3 Bucket
+
+* Open Amazon S3 Console
+* Click **Create Bucket**
+* Bucket Name: `techgg-mybucket`
+* Enable **Versioning**
+* Keep **Block Public Access** enabled
+* Create Bucket 
+
+### Step 2: Upload Test Files
+
+* Upload File 1
+* Upload File 2 
+
+### Step 3: Configure CORS
+
+* Open Bucket
+* Go to **Permissions**
+* Scroll to **CORS**
+* Click **Edit**
+* Paste CORS JSON configuration
+* Save Changes 
+
+---
+
+## 🌍 Real-World Problem It Solves
+
+### Scenario
+
+Your company website (`www.company.com`) stores images, PDFs, and videos in S3.
+
+Without CORS:
+
+* Browser blocks access to S3 files.
+* Users cannot view images or download files.
+
+With CORS:
+
+* Only approved websites can access bucket data.
+* Unauthorized websites remain blocked. 
+
+---
+
+## 🔑 Key Takeaways
+
+* CORS controls browser access to S3 resources.
+* Origin = Protocol + Domain + Port.
+* Only approved domains can access bucket content.
+* Improves security by blocking unwanted websites. 
+
+---
+
+# Lab 2: AWS S3 Object Lock
+
+## 🎯 Objective
+
+Protect important files from accidental deletion, ransomware attacks, or unauthorized modification using Object Lock. 
+
+## 📝 Beginner-Level Steps
+
+### Step 1: Create Bucket
+
+* Create Bucket: `mybucket-object-lock`
+* Enable Versioning
+* Enable Object Lock
+* Create Bucket 
+
+### Step 2: Upload Files
+
+* Upload File 1
+* Upload File 2 
+
+### Step 3: Configure Object Lock
+
+For each file:
+
+* Open Object
+* Go to Properties
+* Object Lock Retention → Edit
+* Enable Retention
+* Select **Compliance Mode**
+* Set Retention Date
+* Save Changes 
+
+### Step 4: Test Deletion
+
+* Delete File 1
+* Delete File 2
+* Attempt Empty Bucket
+* Observe deletion protection behavior 
+
+---
+
+## 🌍 Real-World Problem It Solves
+
+### Scenario 1: Financial Records
+
+Banks must keep records unchanged for several years.
+
+### Scenario 2: Legal Documents
+
+Court evidence cannot be altered or deleted.
+
+### Scenario 3: Ransomware Protection
+
+Even if an attacker gains access, protected files cannot be permanently deleted during retention periods.
+
+---
+
+## 🔑 Key Takeaways
+
+### Governance Mode
+
+* Special IAM users can bypass retention. 
+
+### Compliance Mode
+
+* Strongest protection.
+* Even AWS Root User cannot delete data. 
+
+### Important Requirement
+
+* Versioning must be enabled before Object Lock. 
+
+### Deletion Behavior
+
+* Normal deletion creates a delete marker.
+* Permanent deletion is blocked until retention expires. 
+
+---
+
+# AWS WILL CHARGE YOU....
+###   DO NOT PERFORM THIS LAB, AS IT CAN BE PERFORMED IN FREE TIER ACCOUNT, BUT AWS WILL CHARGE YOU FOR THIS LAB.
+# Lab 3: S3 Storage Classes & Lifecycle Rules
+
+## 🎯 Objective
+
+Learn how to reduce storage costs by moving files automatically to cheaper storage classes based on age and access frequency. 
+
+## 📝 Beginner-Level Steps
+
+### Step 1: Create Bucket
+
+* Create Bucket: `techgg-data-archival-26`
+* Enable Versioning
+* Create Bucket 
+
+### Step 2: Upload Files
+
+* Upload sample files 
+
+### Step 3: Manual Storage Class Change
+
+* Open Bucket
+* Select File
+* Actions → Edit Storage Class
+* Choose Glacier Instant Retrieval
+* Save Changes 
+
+### Step 4: Create Lifecycle Rule
+
+* Open Bucket
+* Management Tab
+* Lifecycle Configuration
+* Create Rule
+* Name: `my-lifecycle-rule-1`
+* Apply to all objects
+* Enable storage class transitions 
+
+### Step 5: Configure Transitions
+
+* Standard → Standard-IA after 90 days
+* Standard-IA → One Zone-IA after 180 days 
+
+---
+
+## 🌍 Real-World Problem It Solves
+
+### Scenario 1: Company Backups
+
+Daily backups become less important over time.
+
+### Scenario 2: CCTV Recordings
+
+Recent footage needs fast access, older footage rarely accessed.
+
+### Scenario 3: Medical Records
+
+Must be stored for years but rarely viewed.
+
+Lifecycle rules automatically move data to cheaper storage, reducing AWS costs. 
+
+---
+
+## 🔑 Key Takeaways
+
+### Storage Classes
+
+| Storage Class | Purpose                       |
+| ------------- | ----------------------------- |
+| Standard      | Frequently accessed data      |
+| Standard-IA   | Infrequently accessed data    |
+| One Zone-IA   | Lower-cost, single AZ storage |
+| Glacier       | Long-term archival            |
+
+
+
+### Lifecycle Rules
+
+* Automate storage optimization.
+* Reduce manual management.
+* Save storage costs automatically. 
+
+---
+
+# 🧹 Post-Lab Cleanup
+
+## Cleanup 1: CORS Bucket (`techgg-mybucket`)
+
+1. Open S3 Console
+2. Select Bucket
+3. Click **Empty**
+4. Confirm deletion
+5. Delete Bucket permanently 
+
+---
+
+## Cleanup 2: Object Lock Bucket (`mybucket-object-lock`)
+
+### If Retention Has Expired
+
+1. Show Versions
+2. Delete all object versions
+3. Delete delete-markers
+4. Empty Bucket
+5. Delete Bucket 
+
+### If Retention Is Active
+
+* AWS will not allow permanent deletion.
+* Wait until Retain-Until Date expires. 
+
+---
+
+## Cleanup 3: Lifecycle Bucket (`techgg-data-archival-26`)
+
+1. Open Management Tab
+2. Delete Lifecycle Rule
+3. Empty Bucket
+4. Delete Uploaded Files
+5. Delete Bucket permanently 
+
+---
+
+# 📌 Final Lab Summary
+
+After completing these labs, you will understand:
+
+✅ How to securely share S3 resources using CORS
+✅ How to protect critical data using Object Lock
+✅ How to prevent accidental or malicious deletion
+✅ How to optimize storage costs using Lifecycle Rules
+✅ How organizations implement compliance, archival, backup, and data retention strategies in AWS S3 
