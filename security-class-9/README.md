@@ -946,3 +946,476 @@ To prevent unnecessary charges on your AWS account, clean up resources in the ex
 * Click **Actions** $\rightarrow$ **Delete VPC** *(AWS will automatically remove attached subnets, route tables, and security groups associated with this VPC)*.
 
 -------xxxxxxxxxx-------------
+
+
+
+# AWS VPC Traffic Mirroring Lab
+
+## Lab Objective
+
+This lab focuses on implementing AWS VPC Traffic Mirroring to capture and analyze network traffic between EC2 instances. You will also learn how to securely connect to private EC2 instances using EC2 Instance Connect Endpoint (EICE) and configure internal DNS resolution using Route 53 Private Hosted Zones. 
+
+---
+
+# Real-World Scenario
+
+A company runs a production web server that is receiving customer traffic. The security team wants to inspect network packets for suspicious activity without affecting the production server.
+
+Instead of installing monitoring tools on the production server:
+
+* Traffic is mirrored from the production server.
+* Mirrored packets are sent to a dedicated monitoring server.
+* Security teams analyze traffic using tcpdump or Wireshark.
+* Private servers remain inaccessible from the internet and are managed securely using EC2 Instance Connect Endpoint.
+* Internal applications communicate using private DNS names such as `webserver.myinternal.com`.
+
+---
+
+# Beginner-Level Lab Flow
+
+```text
+Production Server
+        │
+        ▼
+Traffic Mirroring
+        │
+        ▼
+Target Mirror Server
+        │
+        ▼
+tcpdump / Wireshark Analysis
+
+Private Server
+        │
+        ▼
+EC2 Instance Connect Endpoint
+        │
+        ▼
+Secure Private Access
+
+Route 53 Private Hosted Zone
+        │
+        ▼
+Internal DNS Resolution
+```
+
+---
+
+# Beginner-Level Steps
+
+## Part 1: Configure Traffic Mirroring
+
+### Step 1: Launch Production Server
+
+* Create Linux EC2 Instance
+* Use Default VPC
+* Select Public Subnet (1a)
+* Enable Public IP
+* Create Security Group:
+
+  * SSH (22)
+  * HTTP (80)
+
+Purpose:
+
+* Acts as the traffic source. 
+
+---
+
+### Step 2: Launch Target Mirror Server
+
+* Create another Linux EC2 Instance
+* Place it in another subnet (1b)
+
+Purpose:
+
+* Receives mirrored packets for analysis. 
+
+---
+
+### Step 3: Create Traffic Mirror Target
+
+Navigate:
+
+```text
+VPC
+ └── Traffic Mirroring
+      └── Mirror Targets
+           └── Create Target
+```
+
+Configure:
+
+```text
+Name: Traffic-Mirror-target
+Target Type: Network Interface
+Target: ENI of Target Server
+```
+
+Purpose:
+
+* Defines where copied traffic will be sent. 
+
+---
+
+### Step 4: Create Mirror Filter
+
+Navigate:
+
+```text
+VPC
+ └── Traffic Mirroring
+      └── Mirror Filters
+```
+
+Create:
+
+```text
+Traffic-Mirror-Filter
+```
+
+Add:
+
+* Accept All Traffic Rule
+* Reject Rule
+
+Purpose:
+
+* Controls which packets are mirrored. 
+
+---
+
+### Step 5: Create Mirror Session
+
+Navigate:
+
+```text
+VPC
+ └── Traffic Mirroring
+      └── Mirror Sessions
+```
+
+Configure:
+
+```text
+Name: My-Mirror-session
+Source: Production Server ENI
+Target: Traffic-Mirror-target
+Filter: Traffic-Mirror-Filter
+Session Number: 1
+```
+
+Purpose:
+
+* Connects Source + Target + Filter together. 
+
+---
+
+### Step 6: Generate Network Traffic
+
+Connect to Production Server.
+
+Run:
+
+```bash
+sudo su
+ping -c 5 google.com
+curl -I http://example.com
+```
+
+Purpose:
+
+* Creates traffic that can be mirrored. 
+
+---
+
+### Step 7: Capture Mirrored Packets
+
+Connect to Target Server.
+
+Install tcpdump:
+
+```bash
+sudo su
+yum install tcpdump -y
+ip a
+```
+
+Capture packets:
+
+```bash
+tcpdump -i ens5 -nn -c 5
+```
+
+Purpose:
+
+* Verifies that mirrored traffic is reaching the target server. 
+
+---
+
+### Step 8: Save Packets for Analysis
+
+```bash
+tcpdump -i ens5 -nn -w traffic_capture.pcap
+```
+
+Check file:
+
+```bash
+ll
+```
+
+Purpose:
+
+* Creates packet capture file for Wireshark analysis. 
+
+---
+
+# Part 2: EC2 Instance Connect Endpoint (EICE)
+
+### Step 9: Create Custom VPC
+
+Create:
+
+```text
+VPC: MY-VPC-1
+CIDR: 10.10.0.0/16
+```
+
+Subnets:
+
+```text
+Public Subnet : 10.10.10.0/24
+Private Subnet: 10.10.20.0/24
+```
+
+Create and attach:
+
+```text
+IGW-1
+```
+
+Purpose:
+
+* Builds a custom network environment. 
+
+---
+
+### Step 10: Create Private Server
+
+Launch EC2:
+
+```text
+VPC: MY-VPC-1
+Subnet: Private Subnet
+```
+
+Purpose:
+
+* Server without direct internet access. 
+
+---
+
+### Step 11: Create EC2 Instance Connect Endpoint
+
+Navigate:
+
+```text
+VPC
+ └── Endpoints
+      └── Create Endpoint
+```
+
+Configure:
+
+```text
+Type: EC2 Instance Connect Endpoint
+Name: MY-Endpoint-private-server
+```
+
+Purpose:
+
+* Secure access to private EC2 instances. 
+
+---
+
+### Step 12: Connect to Private Server
+
+Use:
+
+```text
+Connect using Private IP
+```
+
+Select:
+
+```text
+MY-Endpoint-private-server
+```
+
+Purpose:
+
+* Access private instance without Public IP. 
+
+---
+
+# Part 3: Route 53 Private DNS
+
+### Step 13: Enable DNS Settings
+
+Navigate:
+
+```text
+VPC
+ └── Edit VPC Settings
+```
+
+Enable:
+
+```text
+DNS Resolution
+DNS Hostnames
+```
+
+Purpose:
+
+* Required for private DNS functionality. 
+
+---
+
+### Step 14: Create Private Hosted Zone
+
+Navigate:
+
+```text
+Route 53
+ └── Hosted Zones
+      └── Create Hosted Zone
+```
+
+Configure:
+
+```text
+Domain: myinternal.com
+Type: Private Hosted Zone
+```
+
+Associate:
+
+```text
+MY-VPC-1
+```
+
+Purpose:
+
+* Provides internal DNS records. 
+
+---
+
+### Step 15: Create Internal DNS Records
+
+Examples:
+
+```text
+webserver.myinternal.com
+proxyengine.myinternal.com
+```
+
+Purpose:
+
+* Allows internal hostname-based communication. 
+
+---
+
+# Key Takeaways
+
+### Traffic Mirroring
+
+* Captures live network traffic without affecting production servers.
+* Uses ENI as traffic source.
+* Mirror Sessions connect Source, Target, and Filter.
+* tcpdump can analyze and save packets into PCAP files. 
+
+### EC2 Instance Connect Endpoint
+
+* Connect to private EC2 instances securely.
+* No Public IP required.
+* No Bastion Host required.
+* Supports temporary secure tunnels. 
+
+### DNS Resolution
+
+* DNS Resolution and DNS Hostnames must be enabled.
+* Route 53 Private Hosted Zones provide internal DNS.
+* AWS VPC DNS Resolver IP is `169.254.169.253`. 
+
+---
+
+# Post-Lab Cleanup
+
+Perform cleanup in this order to avoid AWS charges. 
+
+### 1. Delete Traffic Mirroring Resources
+
+```text
+Mirror Session
+Mirror Target
+Mirror Filter
+```
+
+### 2. Terminate EC2 Instances
+
+```text
+Production Server
+Target Server
+Private Server
+```
+
+### 3. Delete EC2 Instance Connect Endpoint
+
+```text
+MY-Endpoint-private-server
+```
+
+### 4. Delete Route 53 Resources
+
+```text
+Delete:
+- webserver.myinternal.com
+- proxyengine.myinternal.com
+
+Then delete:
+- myinternal.com Hosted Zone
+```
+
+### 5. Delete VPC Infrastructure
+
+```text
+Detach IGW-1
+Delete IGW-1
+Delete MY-VPC-1
+```
+
+### Final Verification Before Logout
+
+✅ No Running EC2 Instances
+
+✅ No Traffic Mirror Sessions
+
+✅ No Traffic Mirror Targets
+
+✅ No Traffic Mirror Filters
+
+✅ No EC2 Instance Connect Endpoints
+
+✅ No Route 53 Private Hosted Zones
+
+✅ No Custom VPC
+
+✅ No Internet Gateway
+
+✅ No Unused Elastic IPs
+
+✅ No Extra EBS Volumes
+
+This ensures the lab environment is completely removed and AWS charges are minimized.
